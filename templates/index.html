@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CermatKuy - Deteksi dan Verifikasi Berita Hoaks</title>
+<meta name="description" content="CermatKuy membantu memeriksa berita atau informasi yang diduga hoaks melalui analisis pola bahasa, reputasi sumber, dan struktur teks." />
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body class="bg-slate-50 text-slate-800 antialiased">
+
+<!-- ============ NAVBAR ============ -->
+<header class="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-slate-200">
+  <div class="max-w-[1200px] mx-auto px-4 sm:px-6 flex items-center justify-between h-16">
+    <a href="#beranda" class="flex items-center gap-2 font-brand font-extrabold text-lg text-slate-900">
+      <span class="w-8 h-8 rounded-lg bg-blue-600 text-white flex items-center justify-center text-sm">CK</span>
+      Cermat<span class="text-blue-600">Kuy</span>
+    </a>
+    <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-slate-600">
+      <a href="#beranda" class="hover:text-blue-600 transition-colors">Beranda</a>
+      <a href="#cara-kerja" class="hover:text-blue-600 transition-colors">Cara Kerja</a>
+      <a href="#tips" class="hover:text-blue-600 transition-colors">Tips Cek Fakta</a>
+      <a href="#tentang" class="hover:text-blue-600 transition-colors">Tentang</a>
+    </nav>
+    <a href="#beranda" class="md:hidden text-sm font-medium text-blue-600">Periksa</a>
+  </div>
+</header>
+
+<!-- ============ HERO + FORM ============ -->
+<section id="beranda" class="relative overflow-hidden">
+  <div class="absolute inset-0 hero-gradient -z-10"></div>
+  <div class="max-w-[1200px] mx-auto px-4 sm:px-6 pt-14 pb-16 sm:pt-20 sm:pb-24 text-center">
+    <span class="inline-flex items-center gap-2 bg-blue-50 text-blue-700 text-xs font-semibold px-3 py-1.5 rounded-full border border-blue-100">
+      Alat bantu literasi digital
+    </span>
+    <h1 class="font-brand mt-5 text-3xl sm:text-5xl font-extrabold tracking-tight text-slate-900">
+      Cermat<span class="text-blue-600">Kuy</span>
+    </h1>
+    <p class="mt-4 text-base sm:text-lg text-slate-500 max-w-xl mx-auto">
+      Periksa informasi sebelum mempercayai atau membagikannya.
+    </p>
+  </div>
+</section>
+
+<!-- ============ MAIN CHECK CARD ============ -->
+<section class="max-w-[1200px] mx-auto px-4 sm:px-6 -mt-10 sm:-mt-14 pb-16">
+  <div class="bg-white rounded-2xl shadow-card border border-slate-100 max-w-3xl mx-auto p-5 sm:p-8">
+
+    <!-- Input type tabs -->
+    <div class="grid grid-cols-2 gap-2 bg-slate-100 rounded-xl p-1 mb-5" role="tablist">
+      <button type="button" id="tab-text" class="tab-btn active" data-tab="text" role="tab" aria-selected="true">
+        Teks Berita
+      </button>
+      <button type="button" id="tab-url" class="tab-btn" data-tab="url" role="tab" aria-selected="false">
+        URL Berita
+      </button>
+    </div>
+
+    <form id="check-form" novalidate>
+      <div id="panel-text">
+        <label for="text-input" class="sr-only">Teks berita</label>
+        <textarea
+          id="text-input"
+          rows="7"
+          maxlength="20000"
+          placeholder="Tempel teks berita atau informasi yang ingin diperiksa di sini..."
+          class="w-full resize-y rounded-xl border border-slate-200 bg-slate-50 focus:bg-white px-4 py-3 text-sm sm:text-base text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+        ></textarea>
+        <div class="flex justify-between mt-1.5 px-1">
+          <span id="text-error" class="text-xs text-red-500 hidden"></span>
+          <span id="text-counter" class="text-xs text-slate-400 ml-auto">0 karakter (minimal 20)</span>
+        </div>
+      </div>
+
+      <div id="panel-url" class="hidden">
+        <label for="url-input" class="sr-only">URL berita</label>
+        <input
+          id="url-input"
+          type="url"
+          placeholder="https://contoh.com/artikel"
+          class="w-full rounded-xl border border-slate-200 bg-slate-50 focus:bg-white px-4 py-3 text-sm sm:text-base text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+        />
+        <div class="mt-1.5 px-1">
+          <span id="url-error" class="text-xs text-red-500 hidden"></span>
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        id="submit-btn"
+        class="mt-5 w-full flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-300 disabled:cursor-not-allowed text-white font-semibold text-base rounded-xl py-3.5 transition-colors shadow-sm"
+      >
+        <svg id="btn-spinner" class="hidden animate-spin h-5 w-5" viewBox="0 0 24 24" fill="none">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"></path>
+        </svg>
+        <span id="btn-label">Periksa Berita</span>
+      </button>
+    </form>
+
+    <p id="loading-text" class="hidden text-center text-sm text-blue-600 mt-3 font-medium">
+      Sedang menganalisis informasi...
+    </p>
+    <p id="form-error" class="hidden text-center text-sm text-red-500 mt-3"></p>
+  </div>
+
+  <!-- ============ RESULT CARD ============ -->
+  <div id="result-section" class="hidden max-w-3xl mx-auto mt-8">
+    <div class="bg-white rounded-2xl shadow-card border border-slate-100 p-5 sm:p-8">
+
+      <!-- Score + status -->
+      <div class="flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-8">
+        <div class="flex flex-col items-center shrink-0">
+          <div id="score-value" class="text-4xl font-extrabold font-brand text-slate-900">--%</div>
+          <div class="text-xs text-slate-400 mt-1">Skor Kepercayaan</div>
+        </div>
+        <div class="flex-1 w-full">
+          <div id="status-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold mb-2">
+            <span id="status-icon"></span>
+            <span id="status-label">--</span>
+          </div>
+          <div class="w-full h-2.5 rounded-full bg-slate-100 overflow-hidden">
+            <div id="score-bar" class="h-full rounded-full transition-all duration-700 ease-out" style="width:0%"></div>
+          </div>
+          <p id="result-summary" class="text-sm text-slate-500 mt-2"></p>
+        </div>
+      </div>
+
+      <!-- Article detail (URL mode only) -->
+      <div id="article-detail" class="hidden mt-6 rounded-xl bg-slate-50 border border-slate-100 p-4 text-sm">
+        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2">
+          <div class="sm:col-span-2"><dt class="text-slate-400">Judul</dt><dd id="article-title" class="font-medium text-slate-800 break-words"></dd></div>
+          <div><dt class="text-slate-400">Domain</dt><dd id="article-domain" class="font-medium text-slate-800 break-words"></dd></div>
+          <div><dt class="text-slate-400">Jumlah kata</dt><dd id="article-wordcount" class="font-medium text-slate-800"></dd></div>
+          <div class="sm:col-span-2"><dt class="text-slate-400">URL</dt><dd id="article-url" class="font-medium text-blue-600 break-all"></dd></div>
+        </dl>
+      </div>
+
+      <!-- Why this result -->
+      <div class="mt-7">
+        <h3 class="font-brand text-base font-bold text-slate-900 mb-3">Mengapa mendapatkan hasil ini?</h3>
+        <ul id="indicator-list" class="grid grid-cols-1 gap-2"></ul>
+      </div>
+
+      <!-- Recommendation -->
+      <div class="mt-6 rounded-xl border border-blue-100 bg-blue-50 p-4">
+        <h4 class="text-sm font-semibold text-blue-800 mb-1">Rekomendasi</h4>
+        <p id="result-recommendation" class="text-sm text-blue-700"></p>
+      </div>
+
+      <!-- Disclaimer -->
+      <p class="mt-5 text-xs text-slate-400 leading-relaxed">
+        Hasil pemeriksaan ini merupakan analisis awal berbasis pola bahasa, karakteristik sumber, dan indikator teknis.
+        Hasil tidak menggantikan proses verifikasi fakta dari sumber resmi atau lembaga pemeriksa fakta.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CARA KERJA ============ -->
+<section id="cara-kerja" class="bg-white border-y border-slate-100 py-16">
+  <div class="max-w-[1200px] mx-auto px-4 sm:px-6">
+    <div class="text-center max-w-xl mx-auto mb-12">
+      <h2 class="font-brand text-2xl sm:text-3xl font-extrabold text-slate-900">Bagaimana CermatKuy Bekerja?</h2>
+      <p class="text-slate-500 mt-2 text-sm sm:text-base">Empat langkah sederhana untuk mendapatkan analisis awal.</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3 class="font-semibold text-slate-800 mt-3">Masukkan Informasi</h3>
+        <p class="text-sm text-slate-500 mt-1">Tempel teks berita atau tautan artikel yang ingin diperiksa.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3 class="font-semibold text-slate-800 mt-3">Analisis Konten</h3>
+        <p class="text-sm text-slate-500 mt-1">Sistem memeriksa pola bahasa, gaya penulisan, dan struktur teks.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3 class="font-semibold text-slate-800 mt-3">Evaluasi Indikator</h3>
+        <p class="text-sm text-slate-500 mt-1">Setiap indikator diberi bobot untuk membentuk skor yang transparan.</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <h3 class="font-semibold text-slate-800 mt-3">Lihat Hasil</h3>
+        <p class="text-sm text-slate-500 mt-1">Dapatkan skor, status, dan rekomendasi verifikasi lanjutan.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TIPS ============ -->
+<section id="tips" class="py-16">
+  <div class="max-w-[1200px] mx-auto px-4 sm:px-6">
+    <div class="text-center max-w-xl mx-auto mb-12">
+      <h2 class="font-brand text-2xl sm:text-3xl font-extrabold text-slate-900">Sebelum Membagikan Berita</h2>
+      <p class="text-slate-500 mt-2 text-sm sm:text-base">Kebiasaan kecil ini membantu memutus rantai penyebaran hoaks.</p>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div class="tip-card"><span class="tip-icon">1</span><p>Periksa sumber asli sebelum mempercayai informasi.</p></div>
+      <div class="tip-card"><span class="tip-icon">2</span><p>Baca keseluruhan isi berita, bukan hanya judulnya.</p></div>
+      <div class="tip-card"><span class="tip-icon">3</span><p>Periksa tanggal publikasi, hindari berita lama yang disebar ulang.</p></div>
+      <div class="tip-card"><span class="tip-icon">4</span><p>Bandingkan informasi dengan beberapa media kredibel lain.</p></div>
+      <div class="tip-card"><span class="tip-icon">5</span><p>Cari laporan dari lembaga pemeriksa fakta terpercaya.</p></div>
+      <div class="tip-card"><span class="tip-icon">6</span><p>Periksa apakah foto atau video digunakan di luar konteks aslinya.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TENTANG ============ -->
+<section id="tentang" class="bg-white border-t border-slate-100 py-16">
+  <div class="max-w-[1200px] mx-auto px-4 sm:px-6">
+    <div class="max-w-2xl mx-auto text-center">
+      <h2 class="font-brand text-2xl sm:text-3xl font-extrabold text-slate-900">Tentang CermatKuy</h2>
+      <p class="text-slate-500 mt-4 text-sm sm:text-base leading-relaxed">
+        CermatKuy adalah alat bantu analisis awal yang menggabungkan pemeriksaan pola bahasa, gaya penulisan,
+        struktur teks, dan reputasi sumber untuk membantu pengguna menilai kredibilitas sebuah informasi.
+        Sistem ini menggunakan analisis heuristik lokal secara transparan &mdash; setiap skor yang dihasilkan
+        dapat dijelaskan asal-usulnya, dan hasil analisis bukan merupakan keputusan fakta yang absolut.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="bg-slate-900 text-slate-300 py-10">
+  <div class="max-w-[1200px] mx-auto px-4 sm:px-6 text-center">
+    <div class="font-brand font-bold text-white text-lg">CermatKuy</div>
+    <p class="text-sm text-slate-400 mt-2 max-w-lg mx-auto">
+      Alat bantu analisis awal untuk meningkatkan literasi digital dan membantu pengguna melakukan verifikasi
+      informasi sebelum membagikannya.
+    </p>
+    <p class="text-xs text-slate-500 mt-4">&copy; 2026 CermatKuy</p>
+  </div>
+</footer>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

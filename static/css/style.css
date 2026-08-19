@@ -1,0 +1,149 @@
+:root {
+  --brand-blue: #2563eb;
+  --brand-blue-dark: #1d4ed8;
+  --brand-blue-light: #eff6ff;
+  --status-hoax: #dc2626;
+  --status-hoax-bg: #fef2f2;
+  --status-warn: #d97706;
+  --status-warn-bg: #fffbeb;
+  --status-valid: #16a34a;
+  --status-valid-bg: #f0fdf4;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.font-brand {
+  font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+}
+
+.hero-gradient {
+  background: linear-gradient(180deg, #eff6ff 0%, #f8fafc 65%, #f8fafc 100%);
+}
+
+.shadow-card {
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 12px 32px -12px rgba(15, 23, 42, 0.12);
+}
+
+/* ---------- Tabs ---------- */
+.tab-btn {
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.65rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #64748b;
+  transition: all 0.15s ease;
+  cursor: pointer;
+}
+
+.tab-btn:hover {
+  color: #1e293b;
+}
+
+.tab-btn.active {
+  background: #ffffff;
+  color: var(--brand-blue);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+}
+
+/* ---------- Cara Kerja step cards ---------- */
+.step-card {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.step-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px -12px rgba(15, 23, 42, 0.15);
+}
+
+.step-num {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.65rem;
+  background: var(--brand-blue-light);
+  color: var(--brand-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* ---------- Tips cards ---------- */
+.tip-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 1rem;
+  padding: 1.1rem 1.25rem;
+  font-size: 0.9rem;
+  color: #475569;
+}
+
+.tip-icon {
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 9999px;
+  background: var(--brand-blue-light);
+  color: var(--brand-blue);
+  font-weight: 700;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------- Result: status badge & score bar colors ---------- */
+.status-hoax { background: var(--status-hoax-bg); color: var(--status-hoax); }
+.status-warning { background: var(--status-warn-bg); color: var(--status-warn); }
+.status-valid { background: var(--status-valid-bg); color: var(--status-valid); }
+
+.bar-hoax { background: var(--status-hoax); }
+.bar-warning { background: var(--status-warn); }
+.bar-valid { background: var(--status-valid); }
+
+/* ---------- Indicator list rows ---------- */
+.indicator-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  padding: 0.65rem 0.8rem;
+  border-radius: 0.75rem;
+  font-size: 0.875rem;
+  border: 1px solid #f1f5f9;
+  background: #f8fafc;
+}
+
+.indicator-icon {
+  flex-shrink: 0;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.indicator-good .indicator-icon { color: var(--status-valid); }
+.indicator-warning .indicator-icon { color: var(--status-warn); }
+.indicator-bad .indicator-icon { color: var(--status-hoax); }
+.indicator-neutral .indicator-icon { color: #94a3b8; }
+
+/* ---------- Misc ---------- */
+textarea, input, button {
+  font-family: inherit;
+}
+
+@media (max-width: 640px) {
+  #submit-btn {
+    font-size: 0.95rem;
+  }
+}
